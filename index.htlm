@@ -552,7 +552,7 @@
     preload="auto"
   >
     <source
-      src="petit-biscuit-you.mp3?v=2"
+      src="petit-biscuit-you.mp3?v=3"
       type="audio/mpeg"
     >
   </audio>
