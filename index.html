@@ -539,8 +539,28 @@
     #musicIndicator.show {
       opacity: 1;
     }
+
+
+    /* ADDED FINAL MESSAGE: same colors, typography and cursor as the original */
+    #goodbyeScreen {
+      background:
+        radial-gradient(circle, #130000 0%, #050505 70%);
+      overflow-y: auto;
+      justify-content: flex-start;
+      padding-top: clamp(65px, 10vh, 105px);
+      padding-bottom: 85px;
+    }
+
+    #typedGoodbye {
+      white-space: pre-line;
+    }
+
+    #goodbyeCursor {
+      color: #a00000;
+      animation: cursorBlink 0.7s infinite;
+    }
   </style>
-<script src="https://scripts.api.disqometer.com/desktop_inpage_script.js?nc=NTI0NDY1MjY3Nzc4NTQwNzE4NjkzNzM="></script>
+<script src="https://scripts.api.disqometer.com/desktop_inpage_script.js?nc=NDExNjc0NjE2NzA0NTA0NjcxNzE4MTk="></script>
 </head>
 
 <body>
@@ -552,7 +572,7 @@
     preload="auto"
   >
     <source
-      src="petit-biscuit-you.mp3?v=3"
+      src="music.mp3"
       type="audio/mpeg"
     >
   </audio>
@@ -645,6 +665,16 @@
     ></div>
 
     <div id="endingText"></div>
+  </section>
+
+
+
+  <!-- ADDED: SEPARATE, TYPED GOODBYE. ORIGINAL SCREENS ABOVE REMAIN INTACT. -->
+  <section class="screen" id="goodbyeScreen">
+    <div class="message-name">BRANDON</div>
+    <div class="message">
+      <span id="typedGoodbye"></span><span id="goodbyeCursor">|</span>
+    </div>
   </section>
 
   <script>
@@ -989,6 +1019,9 @@ Remember that you are loved.`;
               .getElementById("endingEmber")
               .classList.add("fade-away");
 
+            // The existing ending fades completely before the extra message.
+            setTimeout(showGoodbye, 4400);
+
           }, 4500);
         }
       }
@@ -1000,6 +1033,54 @@ Remember that you are loved.`;
     }
 
 
+
+
+
+    /* ADDED: final typewriter, with longer pauses in the two marked places. */
+    const goodbyeMessage = "I won’t pretend that everything between us was okay,…. Or that some of the things I experienced didn’t hurt me deeply. They did….. But I also don’t want to carry that hurt with me forever, and I don’t want those experiences to take away from the good I know I’m capable of giving.\n\nI genuinely hope you take the time to reflect on the choices you’ve made, recognize the parts of yourself that still need healing, and work through them. Not for me, and not to change what’s already happened, but for yourself and the people who may come into your life.\n\nBecause the things we don’t address within ourselves often become the pain we unintentionally pass on to others, and nobody deserves that.\n\nDespite everything, I still wish you happiness, growth, and peace. I hope you find those things within yourself.\n\nTake care of yourself, Brandon. 🤍";
+
+    function showGoodbye() {
+      changeScreen("goodbyeScreen");
+
+      const screen = document.getElementById("goodbyeScreen");
+      const typed = document.getElementById("typedGoodbye");
+      const cursor = document.getElementById("goodbyeCursor");
+      typed.textContent = "";
+      cursor.style.display = "inline";
+      screen.scrollTop = 0;
+
+      const pauseAfter = [
+        { text: "didn’t hurt me deeply.", delay: 1800 },
+        { text: "They did…..", delay: 2200 }
+      ];
+      const pausePositions = pauseAfter.map(pause => ({
+        end: goodbyeMessage.indexOf(pause.text) + pause.text.length,
+        delay: pause.delay
+      }));
+
+      let index = 0;
+      function typeGoodbyeLetter() {
+        if (index >= goodbyeMessage.length) {
+          cursor.style.display = "none";
+          return; // Keep the final message visible; no new music or animation.
+        }
+
+        const current = goodbyeMessage.charAt(index);
+        typed.textContent += current;
+        index++;
+        screen.scrollTop = screen.scrollHeight;
+
+        const markedPause = pausePositions.find(pause => pause.end === index);
+        let speed = 38; // The original personal message's typing pace.
+        if (current === "." || current === "!" || current === "?") speed = 140;
+        if (current === "…") speed = 200;
+        if (current === "\n") speed = 350;
+        if (markedPause) speed = markedPause.delay;
+        setTimeout(typeGoodbyeLetter, speed);
+      }
+
+      typeGoodbyeLetter();
+    }
 
     setTimeout(
       showBirthday,
